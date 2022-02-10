@@ -62,17 +62,7 @@
         </tr>
       </thead>
 
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>John Doe</td>
-          <td>John@mail.com</td>
-          <td>29</td>
-          <td>Software Developer</td>
-          <td><button>Edit</button></td>
-          <td><button>Delete</button></td>
-        </tr>
-      </tbody>
+      <tbody id="employeeDatabase"></tbody>
     </table>
 
     <br />
@@ -134,7 +124,30 @@
 
       let data = [
         new Employee("John", "Doe", "John@mail.com", 29, "Software Developer"),
+        new Employee("Mark", "Sloan", "Mark@mail.com", 24, "UI/UX"),
+        new Employee("Sandra", "Grey", "sandra@mail.com", 21, "Data Scientist"),
       ];
+
+      const renderData = () => {
+        let htmlResult = "";
+        data.forEach((val, idx) => {
+          htmlResult += `
+        <tr>
+        
+        <td>${idx + 1}</td>
+        <td>${val.firstName} ${val.lastName}</td>
+        <td>${val.email}</td>
+        <td>${val.age}</td>
+        <td>${val.occupation} </td>
+        <td><button>Edit</button></td>
+        <td><button>Delete</button></td>
+        </tr>
+        `;
+        });
+
+        document.getElementById("employeeDatabase").innerHTML = htmlResult;
+      };
+      renderData();
     </script>
   </body>
 </html>
