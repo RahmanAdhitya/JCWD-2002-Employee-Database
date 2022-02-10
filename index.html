@@ -17,12 +17,13 @@
     </style>
     <fieldset>
       <legend>Employee Information</legend>
-      <label for="fname">First name:</label>
-      <input type="text" id="fname" name="fname" />
+      <label for="firstName">First name:</label>
+      <input type="text" id="firstName" name="firstName" />
       <br />
+      <!-- hello -->
       <br />
-      <label for="lname">Last name:</label>
-      <input type="text" id="lname" name="lname" />
+      <label for="lastName">Last name:</label>
+      <input type="text" id="lastName" name="lastName" />
       <br />
       <br />
       <label for="email">Email:</label>
@@ -42,10 +43,49 @@
       </select>
       <br />
       <br />
-      <button>Create Data</button>
+      <button onclick="addData()">Create Data</button>
     </fieldset>
 
     <br />
+
+    <fieldset>
+      <legend>Search Employee</legend>
+      <label for="searchName">Employee Name:</label>
+      <input type="text" id="searchName" name="searchName" />
+      <br />
+      <br />
+      <label for="searchOccupation">Occupation</label>
+      <select id="searchOccupation">
+        <option value="">All Occupations</option>
+        <option>Software Developer</option>
+        <option>UI/UX</option>
+        <option>Digital Marketer</option>
+        <option>Data Scientist</option>
+      </select>
+      <br />
+      <br />
+      <button onclick="searchEmployees()">Search Employee</button>
+    </fieldset>
+
+    <br />
+
+    <fieldset>
+      <legend>Sort Employee</legend>
+      <label for="sortEmployee">Order</label>
+      <select id="order">
+        <option>Ascending</option>
+        <option>Descending</option>
+      </select>
+      <br />
+      <br />
+      <button id="sortByName" onclick="sortEmployee()" value="true">
+        Sort Employee By Name
+      </button>
+      <button id="sortByAge" onclick="sortEmployee()" value="true">
+        Sort Employee By Age
+      </button>
+      <button>Reset Sort</button>
+    </fieldset>
 
     <table>
       <caption>
@@ -56,107 +96,138 @@
           <th>No</th>
           <th>Name</th>
           <th>Email</th>
-          <th>Age</th>
           <th>Occupation</th>
-          <th colspan="2">Action</th>
+          <th>Age</th>
         </tr>
       </thead>
 
       <tbody id="employeeDatabase"></tbody>
     </table>
 
-    <br />
-    <br />
-
-    <fieldset>
-      <legend>Search Employee</legend>
-      <label for="fname">Employee Name:</label>
-      <input type="text" id="fname" name="fname" />
-      <br />
-      <br />
-      <label for="occupation">Occupation</label>
-      <select id="occupation">
-        <option>All Occupations</option>
-        <option>Software Developer</option>
-        <option>UI/UX</option>
-        <option>Digital Marketer</option>
-        <option>Data Scientist</option>
-      </select>
-      <br />
-      <br />
-      <button>Search Employee</button>
-    </fieldset>
-
-    <table>
-      <caption>
-        Search Results
-      </caption>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Age</th>
-          <th>Occupation</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>John Doe</td>
-          <td>John@mail.com</td>
-          <td>29</td>
-          <td>Software Developer</td>
-        </tr>
-      </tbody>
-    </table>
     <script>
       class Employee {
-        constructor(firstName, lastName, email, age, occupation) {
-          this.firstName = firstName;
-          this.lastName = lastName;
+        constructor(fullName, occupation, email, age) {
+          this.fullName = fullName;
           this.email = email;
           this.age = age;
           this.occupation = occupation;
         }
       }
 
-      let data = [
-        new Employee("John", "Doe", "John@mail.com", 29, "Software Developer"),
-        new Employee("Mark", "Sloan", "Mark@mail.com", 24, "UI/UX"),
-        new Employee("Sandra", "Grey", "sandra@mail.com", 21, "Data Scientist"),
+      let employeeDatabase = [
+        new Employee("Mark", "Software Developer", "mark@mail.com", 17),
+        new Employee("Steve", "Digital Marketer", "steve@mail.com", 21),
+        new Employee("Bill", "UI/UX", "bill@mail.com", 13),
+        new Employee("Seto", "Data Scientist", "seto@mail.com", 30),
       ];
 
-      const renderData = () => {
+      const renderData = (dataToRender = []) => {
         let htmlResult = "";
-        data.forEach((val, idx) => {
+
+        dataToRender.forEach((val, idx) => {
           htmlResult += `
-        <tr>
-        
-        <td>${idx + 1}</td>
-        <td>${val.firstName} ${val.lastName}</td>
-        <td>${val.email}</td>
-        <td>${val.age}</td>
-        <td>${val.occupation} </td>
-        <td><button>Edit</button></td>
-        <td><button>Delete</button></td>
-        </tr>
-        `;
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${val.fullName}</td>
+              <td>${val.email}</td>
+              <td>${val.occupation}</td>
+              <td>${val.age}</td>
+            </tr>
+          `;
         });
 
         document.getElementById("employeeDatabase").innerHTML = htmlResult;
       };
-      renderData();
+
+      const addData = () => {
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
+        const email = document.getElementById("email").value;
+        const age = document.getElementById("age").value;
+        const occupation = document.getElementById("occupation").value;
+
+        const newEmployee = new Employee(
+          `${firstName} ${lastName}`,
+          occupation,
+          email,
+          age
+        );
+
+        employeeDatabase.push(newEmployee);
+
+        renderData(employeeDatabase);
+      };
+
+      renderData(employeeDatabase);
+
+      const searchEmployees = () => {
+        let searchEmployeeNameValue =
+          document.getElementById("searchName").value;
+        let searchEmployeeOccupationValue =
+          document.getElementById("searchOccupation").value;
+
+        let filteredData = employeeDatabase.filter((val) => {
+          return (
+            val.fullName
+              .toLowerCase()
+              .includes(searchEmployeeNameValue.toLowerCase()) &&
+            val.occupation
+              .toLowerCase()
+              .includes(searchEmployeeOccupationValue.toLowerCase())
+          );
+        });
+
+        renderData(filteredData);
+      };
+
+      const sortEmployee = (sortOrderValue, sortBy) => {
+        sortOrderValue = document.getElementById("order").value;
+        let sortByName = document.getElementById("sortByName").value;
+        let sortByAge = document.getElementById("sortByAge").value;
+
+        let sortData = () => {
+          if (sortByName && sortOrderValue == "Ascending") {
+            employeeDatabase.sort((a, b) =>
+              a.firstName > b.firstName ? 1 : -1
+            );
+          } else if (sortByName && sortOrderValue == "Descending") {
+            employeeDatabase.sort((a, b) =>
+              a.firstName < b.firstName ? 1 : -1
+            );
+          } else if (sortByAge && sortOrderValue == "Ascending") {
+            employeeDatabase.sort((a, b) => (a.age > b.age ? 1 : -1));
+          } else if (sortByAge && sortOrderValue == "Descending") {
+            employeeDatabase.sort((a, b) => (a.age > b.age ? 1 : -1));
+          }
+          return sortData;
+          console.log(sortData);
+        };
+        renderData(sortData);
+      };
     </script>
   </body>
 </html>
 
 <!-- 
-  feat -> feature, digunakan ketika ada peruabahan fitur.
-  fix -> digunakan ketika melakukan bugfix.
-  ui-> digunakan ketika ada perubahan tampilan.
-  docs -> digunakan ketika ada perubahan dokumentasi.
-  chore-> digunakan ketka merapikan tetapi tidak merubah fungsi.
-  ref -> digunakan ketika melakukan perubahan fitur atau optimalisasi.
+  1. Inisialisasi Repository (Sekali saja)
+    a. git init
+    b. git remote add origin <URL_GITHUB_REPO>
+  2. Setiap ada perubahan file
+    a. git add .
+    b. git commit -m "<MESSAGE>"
+    c. git push origin main
+
+  3. Mac users (sekali seumur hidup)
+    a. git config --global init.defaultBranch main
+    b. git branch -m main
  -->
+
+<!-- 
+   feat -> feature. Digunakan ketika ada perubahan di fitur.
+   fix -> digunakan ketika melakukan bugfix
+   ui -> digunakan ketika ada perubahan tampilan
+   docs -> digunakan ketika ada perubahan dokumentasi
+   chore -> digunakan ketika merapikan tetapi tidak mengubah
+            fungsi
+   ref -> digunakan ketika melakukan perapihan fitur atau optimasi
+  -->
